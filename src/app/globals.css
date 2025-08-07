@@ -1,0 +1,1378 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* === OFFICIAL CLEARPOINT BRAND SYSTEM === */
+  
+  /* Core Brand Palette - Official Colors */
+  --navy: 22 41 68;          /* #162944 - Primary brand navy */
+  --royal: 32 59 86;         /* #203B56 - Secondary brand royal */
+  --indigo: 52 95 148;       /* #345F94 - Accent indigo */
+  --cyan: 41 171 226;        /* #29ABE2 - Bright cyan */
+  --amber: 244 180 0;        /* #F4B400 - Gold amber */
+  --black: 0 0 0;            /* #000000 - Pure black */
+  --silver: 204 204 204;     /* #CCCCCC - Light silver */
+  --coral: 255 107 87;       /* #FF6B57 - Warm coral */
+  --charcoal: 41 41 41;      /* #292929 - Dark charcoal */
+  --slateGray: 122 122 122;  /* #7A7A7A - Medium slate gray */
+  --crimson: 214 67 59;      /* #D6433B - Red crimson */
+  --alabaster: 250 250 250;  /* #FAFAFA - Off-white alabaster */
+  --platinum: 240 240 240;   /* #F0F0F0 - Light platinum */
+
+  /* Legacy Neutral Colors (replaced with official names) */
+  --dark-gray: var(--charcoal);    /* Use charcoal instead */
+  --medium-gray: var(--slateGray); /* Use slateGray instead */
+  --light-gray: var(--silver);     /* Use silver instead */
+  
+  /* Primary Brand Colors (Navy-based with Official Clearpoint Integration) */
+  --primary: var(--navy);        /* #162944 - Primary navy */
+  --primary-50: var(--alabaster); /* #FAFAFA - Lightest background */
+  --primary-100: var(--platinum); /* #F0F0F0 - Light background */
+  --primary-200: var(--silver);   /* #CCCCCC - Light borders */
+  --primary-300: var(--slateGray); /* #7A7A7A - Medium gray */
+  --primary-400: var(--charcoal);  /* #292929 - Dark gray */
+  --primary-500: var(--navy);      /* #162944 - Base navy */
+  --primary-600: var(--navy);      /* #162944 - Base navy */
+  --primary-700: var(--royal);     /* #203B56 - Darker royal */
+  --primary-800: var(--royal);     /* #203B56 - Royal blue */
+  --primary-900: 18 35 58;         /* Darker than royal */
+  --primary-950: 12 23 38;         /* Darkest navy */
+  
+  /* Primary scale numerical for calculations */
+  --primary-25: 251 252 253;      /* Ultra light for subtle backgrounds */
+  
+  /* Accent Colors */
+  --accent-amber: 244 180 0; /* #F4B400 */
+  --accent-amber-50: 255 251 235;
+  --accent-amber-100: 254 243 199;
+  --accent-amber-200: 253 230 138;
+  --accent-amber-300: 252 211 77;
+  --accent-amber-400: 251 191 36;
+  --accent-amber-500: 244 180 0;
+  --accent-amber-600: 217 119 6;
+  --accent-amber-700: 180 83 9;
+  --accent-amber-800: 146 64 14;
+  --accent-amber-900: 120 53 15;
+  
+  /* Semantic Token System - Using Official Clearpoint Colors */
+  --background: 255 255 255;              /* White background */
+  --foreground: var(--navy);              /* Navy text */
+  --muted: var(--alabaster);              /* Alabaster for muted backgrounds */
+  --muted-foreground: var(--slateGray);   /* Slate gray for muted text */
+  --popover: 255 255 255;                 /* White popover */
+  --popover-foreground: var(--navy);      /* Navy popover text */
+  --card: 255 255 255;                    /* White cards */
+  --card-foreground: var(--navy);         /* Navy card text */
+  --border: var(--platinum);              /* Platinum borders */
+  --input: var(--platinum);               /* Platinum input borders */
+  --primary-foreground: 255 255 255;      /* White text on primary */
+  --secondary: var(--royal);              /* Royal for secondary */
+  --secondary-foreground: 255 255 255;    /* White text on secondary */
+  --accent: var(--amber);                 /* Amber for accents */
+  --accent-foreground: var(--navy);       /* Navy text on amber */
+  --destructive: var(--crimson);          /* Crimson for destructive actions */
+  --destructive-foreground: 255 255 255;  /* White text on crimson */
+  --success: 16 185 129;                  /* Keep green for success */
+  --success-foreground: 255 255 255;      /* White text on success */
+  --warning: var(--amber);                /* Amber for warnings */
+  --warning-foreground: var(--navy);      /* Navy text on amber */
+  --info: var(--cyan);                    /* Cyan for info */
+  --info-foreground: 255 255 255;         /* White text on cyan */
+  --ring: var(--navy);                    /* Navy focus rings */
+  --radius: 0.5rem;
+  
+  /* Typography System */
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  
+  /* Spacing & Layout */
+  --container-max-width: 1440px;
+  --sidebar-width: 240px;
+  --header-height: 64px;
+  
+  /* Animation & Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --background: 15 23 42;
+  --foreground: 248 250 252;
+  --muted: 30 41 59;
+  --muted-foreground: 148 163 184;
+  --popover: 30 41 59;
+  --popover-foreground: 248 250 252;
+  --card: 30 41 59;
+  --card-foreground: 248 250 252;
+  --border: 51 65 85;
+  --input: 51 65 85;
+  --primary-foreground: 248 250 252;
+  --secondary: 51 65 85;
+  --secondary-foreground: 248 250 252;
+  --accent: 51 65 85;
+  --accent-foreground: 248 250 252;
+  --destructive: 220 38 38;
+  --destructive-foreground: 248 250 252;
+  --ring: 22 41 68;
+}
+
+@layer base {
+  /* === RESET & BASE STYLES === */
+  * {
+    border-color: hsl(var(--border)); /* Fixed: Use hsl(var(--border)) */
+    box-sizing: border-box;
+  }
+  
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* === TYPOGRAPHY === */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+  
+  h1 { font-size: 2.25rem; line-height: 2.5rem; }
+  h2 { font-size: 1.875rem; line-height: 2.25rem; }
+  h3 { font-size: 1.5rem; line-height: 2rem; }
+  h4 { font-size: 1.25rem; line-height: 1.75rem; }
+  h5 { font-size: 1.125rem; line-height: 1.75rem; }
+  h6 { font-size: 1rem; line-height: 1.5rem; }
+  
+  @media (min-width: 1024px) {
+    h1 { font-size: 3rem; line-height: 1; }
+    h2 { font-size: 2.25rem; line-height: 2.5rem; }
+    h3 { font-size: 1.875rem; line-height: 2.25rem; }
+    h4 { font-size: 1.5rem; line-height: 2rem; }
+    h5 { font-size: 1.25rem; line-height: 1.75rem; }
+    h6 { font-size: 1.125rem; line-height: 1.75rem; }
+  }
+  
+  p {
+    font-weight: 400;
+    line-height: 1.6;
+  }
+  
+  /* === FOCUS STYLES === */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  /* === FORM ELEMENTS === */
+  input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+  }
+  
+  button {
+    font-family: inherit;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+  
+  /* === UTILITIES === */
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: var(--container-max-width);
+  }
+  
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+}
+
+@layer components {
+  /* === CUSTOM BACKGROUNDS === */
+  .gradient-brand {
+    background: linear-gradient(135deg, 
+      hsl(var(--primary)) 0%, 
+      hsl(var(--primary-800)) 50%, 
+      hsl(var(--primary-700)) 100%
+    );
+  }
+  
+  .gradient-brand-warm {
+    background: linear-gradient(135deg, 
+      hsl(var(--amber)) 0%, 
+      hsl(var(--royal)) 100%
+    );
+  }
+  
+  .login-background {
+    background: #203B56; /* #203B56 solid color */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .login-background::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    animation: subtle-float 30s ease-in-out infinite;
+  }
+  
+  /* === GLASS MORPHISM === */
+  .glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* === BUTTON VARIANTS === */
+  .btn-primary {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transition: all 200ms;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-primary:hover {
+    background-color: hsl(var(--primary) / 0.9);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+  
+  .btn-primary:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(244,180,0,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  .btn-primary:hover::before {
+    left: 100%;
+  }
+  
+  .btn-secondary {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    border: 1px solid hsl(var(--border));
+    transition: all 200ms;
+  }
+  
+  .btn-secondary:hover {
+    background-color: hsl(var(--secondary) / 0.8);
+  }
+  
+  .btn-secondary:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  .btn-accent {
+    background: hsl(var(--accent-amber));
+    color: hsl(var(--primary));
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transition: all 200ms;
+  }
+  
+  .btn-accent:hover {
+    background: hsl(var(--accent-amber-600));
+    transform: translateY(-1px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+  
+  .btn-accent:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  /* === CARD STYLES === */
+  .card-elegant {
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border-radius: 0.75rem;
+    border: 1px solid hsl(var(--border) / 0.5);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transition: all 300ms;
+  }
+  
+  .card-elegant:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+  
+  /* === LOADING STATES === */
+  .loading-brand {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 9999px;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* === TEXT UTILITIES === */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+@layer utilities {
+  /* === SPACING UTILITIES === */
+  .space-brand > * + * { margin-top: 1.5rem; }
+  .gap-brand { gap: 1.5rem; }
+  
+  /* === ANIMATION UTILITIES === */
+  .animate-in {
+    animation: animate-in 0.5s ease-out;
+  }
+  
+  .animate-out {
+    animation: animate-out 0.3s ease-in;
+  }
+  
+  /* === RESPONSIVE UTILITIES === */
+  .mobile-only { display: block; }
+  .desktop-only { display: none; }
+  
+  @media (min-width: 640px) {
+    .mobile-only { display: none; }
+    .desktop-only { display: block; }
+  }
+  
+  /* === BRAND COLOR UTILITIES === */
+  .bg-navy { background-color: hsl(var(--navy)); }
+  .bg-royal { background-color: hsl(var(--royal)); }
+  .bg-indigo { background-color: hsl(var(--indigo)); }
+  .bg-cyan { background-color: hsl(var(--cyan)); }
+  .bg-amber { background-color: hsl(var(--amber)); }
+  
+  .text-navy { color: hsl(var(--navy)); }
+  .text-royal { color: hsl(var(--royal)); }
+  .text-indigo { color: hsl(var(--indigo)); }
+  .text-cyan { color: hsl(var(--cyan)); }
+  .text-amber { color: hsl(var(--amber)); }
+  
+  .border-navy { border-color: hsl(var(--navy)); }
+  .border-royal { border-color: hsl(var(--royal)); }
+  .border-indigo { border-color: hsl(var(--indigo)); }
+  .border-cyan { border-color: hsl(var(--cyan)); }
+  .border-amber { border-color: hsl(var(--amber)); }
+
+  /* === NEUTRAL COLOR UTILITIES === */
+  .bg-dark-gray { background-color: hsl(var(--dark-gray)); }
+  .bg-medium-gray { background-color: hsl(var(--medium-gray)); }
+  .bg-light-gray { background-color: hsl(var(--light-gray)); }
+
+  .text-dark-gray { color: hsl(var(--dark-gray)); }
+  .text-medium-gray { color: hsl(var(--medium-gray)); }
+  .text-light-gray { color: hsl(var(--light-gray)); }
+
+  .border-dark-gray { border-color: hsl(var(--dark-gray)); }
+  .border-medium-gray { border-color: hsl(var(--medium-gray)); }
+  .border-light-gray { border-color: hsl(var(--light-gray)); }
+  
+  /* === BRAND GRADIENTS === */
+  .brand-gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-600)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .accent-gradient-text {
+    background: linear-gradient(135deg, hsl(var(--amber)), hsl(var(--accent-amber-600)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .full-brand-gradient-text {
+    background: linear-gradient(135deg, 
+      hsl(var(--navy)) 0%, 
+      hsl(var(--royal)) 25%, 
+      hsl(var(--indigo)) 50%, 
+      hsl(var(--cyan)) 75%, 
+      hsl(var(--amber)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* === ACCENT ELEMENTS === */
+  .accent-dot::before {
+    content: '●';
+    color: hsl(var(--amber));
+    margin-right: 0.5rem;
+  }
+  
+  .accent-border-left {
+    border-left: 3px solid hsl(var(--amber));
+    padding-left: 1rem;
+  }
+  
+  .accent-underline {
+    position: relative;
+  }
+  
+  .accent-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(var(--amber)) 0%, transparent 100%);
+  }
+}
+
+/* === KEYFRAMES === */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes animate-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+}
+
+@keyframes subtle-float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10px, -10px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-5px, -20px) rotate(-1deg);
+  }
+  75% {
+    transform: translate(-10px, -10px) rotate(1deg);
+  }
+}
+
+/* === MODAL & FORM FIXES === */
+/* Temporary fixes for readability - to be replaced in Phase 2 design system */
+
+/* Dialog/Modal Overlays */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+/* Fix transparent backgrounds on dialogs */
+[role="dialog"] {
+  background: white !important;
+  border: 1px solid rgb(229 231 235) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Fix input and form element visibility */
+.DialogContent input,
+.DialogContent textarea,
+.DialogContent select,
+[role="dialog"] input,
+[role="dialog"] textarea,
+[role="dialog"] select {
+  background: white !important;
+  border: 1px solid rgb(209 213 219) !important;
+  color: rgb(17 24 39) !important;
+}
+
+/* Remove yellow outlines */
+.DialogContent input:focus,
+.DialogContent textarea:focus,
+.DialogContent select:focus,
+[role="dialog"] input:focus,
+[role="dialog"] textarea:focus,
+[role="dialog"] select:focus {
+  outline: none !important;
+  border-color: rgb(59 130 246) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Fix card backgrounds in modals */
+[role="dialog"] .Card,
+[role="dialog"] [data-card],
+.DialogContent .Card,
+.DialogContent [data-card] {
+  background: white !important;
+  border: 1px solid rgb(229 231 235) !important;
+}
+
+/* Fix button visibility */
+[role="dialog"] button,
+.DialogContent button {
+  background: rgb(59 130 246) !important;
+  color: white !important;
+  border: 1px solid rgb(59 130 246) !important;
+  opacity: 1 !important;
+}
+
+[role="dialog"] button[data-variant="outline"],
+.DialogContent button[data-variant="outline"] {
+  background: white !important;
+  color: rgb(59 130 246) !important;
+  border: 1px solid rgb(59 130 246) !important;
+}
+
+/* Fix label visibility */
+[role="dialog"] label,
+.DialogContent label {
+  color: rgb(55 65 81) !important;
+  font-weight: 500 !important;
+}
+
+/* Fix error text visibility */
+[role="dialog"] .text-red-500,
+.DialogContent .text-red-500 {
+  color: rgb(239 68 68) !important;
+}
+
+/* Fix badge visibility */
+[role="dialog"] .Badge,
+.DialogContent .Badge,
+[role="dialog"] [data-badge],
+.DialogContent [data-badge] {
+  background: rgb(59 130 246) !important;
+  color: white !important;
+}
+
+/* Fix select dropdown visibility */
+[role="listbox"],
+[data-radix-select-content] {
+  background: white !important;
+  border: 1px solid rgb(209 213 219) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+[role="option"],
+[data-radix-select-item] {
+  background: white !important;
+  color: rgb(17 24 39) !important;
+}
+
+[role="option"]:hover,
+[data-radix-select-item]:hover {
+  background: rgb(243 244 246) !important;
+}
+
+/* Fix checkbox visibility */
+[role="dialog"] input[type="checkbox"],
+.DialogContent input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  accent-color: rgb(59 130 246) !important;
+}
+
+/* === QUICK CSS OVERHAUL - CLEARPOINT PROFESSIONAL STYLING === */
+
+/* Fix yellow background issues */
+.bg-yellow-50,
+.bg-yellow-100,
+.bg-amber-50,
+.bg-amber-100 {
+  background-color: rgb(var(--primary-50)) !important;
+}
+
+.bg-yellow-200,
+.bg-yellow-300,
+.bg-amber-200,
+.bg-amber-300 {
+  background-color: rgb(var(--primary-100)) !important;
+}
+
+/* Professional card styling - exclude sidebar */
+.bg-white:not(.sidebar-container *) {
+  background-color: white;
+  border: 1px solid rgb(var(--primary-200));
+  box-shadow: 0 1px 3px 0 rgba(var(--primary-900), 0.1);
+}
+
+/* Enhance primary buttons */
+.bg-blue-600,
+.bg-blue-500 {
+  background-color: rgb(var(--primary)) !important;
+  border-color: rgb(var(--primary)) !important;
+}
+
+.bg-blue-600:hover,
+.bg-blue-500:hover {
+  background-color: rgb(var(--primary-700)) !important;
+  border-color: rgb(var(--primary-700)) !important;
+}
+
+/* Statistics cards enhancement */
+[class*="border-yellow"],
+[class*="border-amber"] {
+  border-color: rgb(var(--primary-300)) !important;
+}
+
+/* Text color improvements */
+.text-yellow-600,
+.text-yellow-700,
+.text-amber-600,
+.text-amber-700 {
+  color: rgb(var(--primary-700)) !important;
+}
+
+/* Badge and status indicator fixes */
+.bg-yellow-100.text-yellow-800,
+.bg-amber-100.text-amber-800 {
+  background-color: rgb(var(--primary-100)) !important;
+  color: rgb(var(--primary-800)) !important;
+}
+
+/* === COMPREHENSIVE BUTTON SYSTEM === */
+
+/* Base button improvements */
+.btn-base,
+button:not(.sidebar-container button),
+[role="button"]:not(.sidebar-container [role="button"]) {
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+}
+
+/* Primary Button - Clearpoint Brand */
+.btn-primary,
+button[data-variant="default"]:not(.sidebar-container button),
+.bg-primary {
+  background-color: rgb(var(--primary)) !important;
+  color: white !important;
+  border: 1px solid rgb(var(--primary)) !important;
+  box-shadow: 0 2px 4px rgba(var(--primary), 0.1);
+}
+
+.btn-primary:hover,
+button[data-variant="default"]:hover:not(.sidebar-container button),
+.bg-primary:hover {
+  background-color: rgb(var(--primary-700)) !important;
+  border-color: rgb(var(--primary-700)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--primary), 0.2);
+}
+
+.btn-primary:active,
+button[data-variant="default"]:active:not(.sidebar-container button),
+.bg-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(var(--primary), 0.15);
+}
+
+/* Secondary/Outline Button */
+.btn-secondary,
+button[data-variant="outline"]:not(.sidebar-container button),
+.border-primary {
+  background-color: white !important;
+  color: rgb(var(--primary)) !important;
+  border: 1px solid rgb(var(--primary-300)) !important;
+  box-shadow: 0 1px 3px rgba(var(--primary), 0.05);
+}
+
+.btn-secondary:hover,
+button[data-variant="outline"]:hover:not(.sidebar-container button),
+.border-primary:hover {
+  background-color: rgb(var(--primary-50)) !important;
+  border-color: rgb(var(--primary)) !important;
+  color: rgb(var(--primary-700)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(var(--primary), 0.1);
+}
+
+/* Success Button - Keep standard green */
+.btn-success {
+  background-color: #10b981 !important;
+  color: white !important;
+  border: 1px solid #10b981 !important;
+}
+
+.btn-success:hover {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Danger Button - Use Clearpoint Crimson */
+.btn-danger {
+  background-color: rgb(var(--crimson)) !important;
+  color: white !important;
+  border: 1px solid rgb(var(--crimson)) !important;
+}
+
+.btn-danger:hover {
+  background-color: rgb(184 57 50) !important; /* Darker crimson */
+  border-color: rgb(184 57 50) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--crimson), 0.2);
+}
+
+/* Info Button - Use Clearpoint Cyan */
+.btn-info {
+  background-color: rgb(var(--cyan)) !important;
+  color: white !important;
+  border: 1px solid rgb(var(--cyan)) !important;
+}
+
+.btn-info:hover {
+  background-color: rgb(35 147 194) !important; /* Darker cyan */
+  border-color: rgb(35 147 194) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--cyan), 0.2);
+}
+
+/* Warning Button - Use Clearpoint Amber */
+.btn-warning {
+  background-color: rgb(var(--amber)) !important;
+  color: rgb(var(--navy)) !important;
+  border: 1px solid rgb(var(--amber)) !important;
+}
+
+.btn-warning:hover {
+  background-color: rgb(214 157 0) !important; /* Darker amber */
+  border-color: rgb(214 157 0) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--amber), 0.2);
+}
+
+/* Disabled Button States */
+button:disabled,
+.btn-disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+button:disabled:hover,
+.btn-disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* === COMPREHENSIVE FORM CONTROLS === */
+
+/* Input Fields */
+input:not(.sidebar-container input),
+textarea:not(.sidebar-container textarea),
+select:not(.sidebar-container select) {
+  border: 1.5px solid rgb(var(--primary-300));
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: all 0.2s ease-in-out;
+  background-color: white;
+  font-size: 0.875rem;
+  color: rgb(var(--charcoal)) !important; /* Dark gray text */
+}
+
+input:focus:not(.sidebar-container input),
+textarea:focus:not(.sidebar-container textarea),
+select:focus:not(.sidebar-container select) {
+  outline: none;
+  border-color: rgb(var(--primary)) !important;
+  box-shadow: 0 0 0 3px rgba(var(--primary), 0.1);
+  background-color: rgb(var(--primary-25));
+}
+
+/* Placeholder Text Styling */
+input::placeholder:not(.sidebar-container input::placeholder),
+textarea::placeholder:not(.sidebar-container textarea::placeholder) {
+  color: rgb(var(--slateGray)) !important;
+  opacity: 1;
+}
+
+/* Tailwind Placeholder Utility Classes */
+.placeholder-clearpoint-slateGray::placeholder {
+  color: rgb(var(--slateGray)) !important;
+  opacity: 1;
+}
+
+/* Select Dropdown Styling - Comprehensive Clearpoint Styling */
+.select-trigger,
+[data-radix-select-trigger],
+[data-state="closed"][data-radix-select-trigger],
+[data-state="open"][data-radix-select-trigger] {
+  border: 1.5px solid rgb(var(--silver)) !important;
+  background-color: white !important;
+  border-radius: 8px !important;
+  padding: 0.75rem !important;
+  transition: all 0.2s ease-in-out !important;
+  color: rgb(var(--navy)) !important;
+  font-size: 0.875rem !important;
+}
+
+.select-trigger:hover,
+[data-radix-select-trigger]:hover {
+  border-color: rgb(var(--primary)) !important;
+  background-color: rgb(var(--alabaster)) !important;
+}
+
+.select-trigger:focus,
+[data-radix-select-trigger]:focus,
+[data-radix-select-trigger][data-state="open"] {
+  border-color: rgb(var(--primary)) !important;
+  box-shadow: 0 0 0 3px rgba(var(--primary), 0.1) !important;
+  background-color: white !important;
+}
+
+/* Fix specific Radix Select classes */
+[data-radix-select-trigger] span {
+  color: rgb(var(--navy)) !important;
+}
+
+[data-radix-select-trigger] svg {
+  color: rgb(var(--slateGray)) !important;
+}
+
+/* Select content styling */
+[data-radix-select-content] {
+  background-color: white !important;
+  border: 1px solid rgb(var(--silver)) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(var(--navy), 0.1) !important;
+}
+
+[data-radix-select-item] {
+  color: rgb(var(--navy)) !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
+[data-radix-select-item]:hover,
+[data-radix-select-item][data-highlighted] {
+  background-color: rgb(var(--alabaster)) !important;
+  color: rgb(var(--navy)) !important;
+}
+
+/* Badge Styling */
+.badge,
+[data-badge] {
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid transparent;
+}
+
+.badge-primary {
+  background-color: rgb(var(--primary-100));
+  color: rgb(var(--navy));
+  border-color: rgb(var(--primary-200));
+}
+
+.badge-secondary {
+  background-color: rgb(var(--platinum));
+  color: rgb(var(--royal));
+  border-color: rgb(var(--silver));
+}
+
+.badge-success {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.badge-warning {
+  background-color: rgb(255 251 235); /* Light amber background */
+  color: rgb(var(--navy));
+  border-color: rgb(var(--amber));
+}
+
+.badge-danger {
+  background-color: rgb(253 242 242); /* Light crimson background */
+  color: rgb(var(--crimson));
+  border-color: rgb(var(--crimson));
+}
+
+.badge-info {
+  background-color: rgb(240 249 255); /* Light cyan background */
+  color: rgb(var(--cyan));
+  border-color: rgb(var(--cyan));
+}
+
+.badge-coral {
+  background-color: rgb(255 245 243); /* Light coral background */
+  color: rgb(var(--coral));
+  border-color: rgb(var(--coral));
+}
+
+/* === PAGE LAYOUT STANDARDS === */
+
+/* Standard Page Container */
+.page-container {
+  min-height: 100vh;
+  background-color: rgb(var(--primary-25));
+}
+
+.page-main {
+  padding: 2rem;
+  max-width: 7xl;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Standard Page Header */
+.page-header {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(var(--primary-200));
+  box-shadow: 0 1px 3px rgba(var(--primary), 0.1);
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: rgb(var(--primary-800));
+  font-family: var(--font-montserrat), var(--font-sans);
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: rgb(var(--primary-600));
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Standard Content Sections */
+.content-section {
+  background-color: white;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(var(--primary-200));
+  box-shadow: 0 1px 3px rgba(var(--primary), 0.1);
+  overflow: hidden;
+}
+
+.section-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgb(var(--primary-100));
+  background-color: rgb(var(--primary-25));
+}
+
+.section-content {
+  padding: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: rgb(var(--primary-800));
+  margin-bottom: 0.25rem;
+}
+
+.section-description {
+  color: rgb(var(--primary-600));
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Card hover effects */
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 25px rgba(var(--primary), 0.1);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Input field enhancements */
+input, textarea, select {
+  border-color: rgb(var(--primary-300));
+  transition: border-color 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: rgb(var(--primary-500));
+  box-shadow: 0 0 0 3px rgba(var(--primary), 0.1);
+}
+
+/* Stats card professional styling */
+.grid > div:has(.text-3xl) {
+  background: linear-gradient(135deg, rgb(var(--primary-50)) 0%, white 100%);
+  border: 1px solid rgb(var(--primary-200));
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.grid > div:has(.text-3xl):hover {
+  border-color: rgb(var(--primary-300));
+  box-shadow: 0 4px 12px rgba(var(--primary), 0.1);
+}
+
+/* Professional typography */
+h1, h2, h3, h4, h5, h6 {
+  color: rgb(var(--primary-800));
+  font-weight: 600;
+}
+
+.text-2xl, .text-xl, .text-lg {
+  color: rgb(var(--primary-800));
+}
+
+/* Remove yellow alert styling */
+.bg-yellow-50.border-yellow-200 {
+  background-color: rgb(var(--primary-50)) !important;
+  border-color: rgb(var(--primary-200)) !important;
+}
+
+/* Professional search and filter styling */
+.border-gray-300 {
+  border-color: rgb(var(--primary-300));
+}
+
+.border-gray-300:focus-within {
+  border-color: rgb(var(--primary-500));
+}
+
+/* Enhanced loading states */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Professional sidebar styling - keep original dark styling */
+.sidebar-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+/* Ensure sidebar maintains its dark styling and isn't affected by global overrides */
+.sidebar-container {
+  background-color: #203B56 !important;
+}
+
+.sidebar-container * {
+  /* Prevent global styles from affecting sidebar content */
+}
+
+.sidebar-container .bg-white {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.sidebar-container h1,
+.sidebar-container h2,
+.sidebar-container h3,
+.sidebar-container h4,
+.sidebar-container h5,
+.sidebar-container h6 {
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.sidebar-container p {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* === COMPREHENSIVE PAGE-WIDE FIXES === */
+
+/* Eliminate ALL yellow styling across the application */
+.bg-yellow-50, .bg-yellow-100, .bg-yellow-200, .bg-yellow-300, .bg-yellow-400,
+.bg-amber-50, .bg-amber-100, .bg-amber-200, .bg-amber-300, .bg-amber-400,
+.border-yellow-200, .border-yellow-300, .border-yellow-400,
+.border-amber-200, .border-amber-300, .border-amber-400,
+.border-yellow-500, .border-amber-500 {
+  background-color: rgb(var(--primary-50)) !important;
+  border-color: rgb(var(--primary-200)) !important;
+}
+
+/* Remove any yellow text colors */
+.text-yellow-500, .text-yellow-600, .text-yellow-700,
+.text-amber-500, .text-amber-600, .text-amber-700 {
+  color: rgb(var(--primary-600)) !important;
+}
+
+/* Fix semantic color tokens that might be showing yellow/brown */
+.border-input {
+  border-color: rgb(var(--silver)) !important;
+}
+
+.text-muted-foreground {
+  color: rgb(var(--slateGray)) !important;
+}
+
+.bg-background {
+  background-color: white !important;
+}
+
+.text-foreground {
+  color: rgb(var(--navy)) !important;
+}
+
+.ring-ring {
+  box-shadow: 0 0 0 3px rgba(var(--primary), 0.1) !important;
+}
+
+/* === COMPREHENSIVE SEMANTIC TOKEN HARDENING === */
+
+/* Table Styling - Force Clearpoint Colors */
+.border-b,
+[class*="border-b"],
+tr, 
+[role="row"],
+.table-row {
+  border-bottom-color: rgb(var(--platinum)) !important;
+  border-color: rgb(var(--platinum)) !important;
+}
+
+.hover\:bg-muted\/50:hover,
+.hover\:bg-muted\/25:hover,
+tr:hover,
+[role="row"]:hover,
+.table-row:hover {
+  background-color: rgb(var(--alabaster)) !important;
+  border-color: rgb(var(--silver)) !important;
+}
+
+.bg-muted\/50,
+.bg-muted\/25,
+.bg-muted {
+  background-color: rgb(var(--platinum)) !important;
+}
+
+/* Badge System Override - Eliminate Purple */
+.bg-purple-100,
+.bg-purple-200 {
+  background-color: rgb(var(--cyan)) / 0.1 !important;
+}
+
+.text-purple-800,
+.text-purple-700 {
+  color: rgb(var(--cyan)) !important;
+}
+
+.border-purple-100,
+.border-purple-200 {
+  border-color: rgb(var(--cyan)) / 0.3 !important;
+}
+
+/* Component-Specific Hardening */
+table tr {
+  border-bottom: 1px solid rgb(var(--platinum)) !important;
+}
+
+table tr:hover {
+  background-color: rgb(var(--alabaster)) !important;
+}
+
+/* Fix any remaining Tailwind defaults */
+.border {
+  border-color: rgb(var(--silver)) !important;
+}
+
+.border-gray-200 {
+  border-color: rgb(var(--platinum)) !important;
+}
+
+.text-gray-500 {
+  color: rgb(var(--slateGray)) !important;
+}
+
+.text-gray-400 {
+  color: rgb(var(--slateGray)) !important;
+}
+
+.text-yellow-600, .text-yellow-700, .text-yellow-800,
+.text-amber-600, .text-amber-700, .text-amber-800 {
+  color: rgb(var(--primary-700)) !important;
+}
+
+/* Fix alert styling */
+.bg-yellow-50.border-yellow-200,
+.bg-amber-50.border-amber-200 {
+  background-color: rgb(var(--primary-50)) !important;
+  border-color: rgb(var(--primary-200)) !important;
+}
+
+/* Professional card spacing and layout */
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+/* Enhanced card styling */
+[data-radix-collection-item],
+.hover\:shadow-md:hover,
+.hover\:shadow-lg:hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Professional button improvements */
+.bg-red-600 {
+  background-color: #dc2626 !important;
+}
+
+.bg-red-600:hover {
+  background-color: #b91c1c !important;
+}
+
+/* Fix development alert styling */
+.border-red-200.bg-red-50 {
+  background-color: #fef2f2 !important;
+  border-color: #fecaca !important;
+}
+
+/* Professional spacing for main sections */
+.customers-page {
+  gap: 2rem;
+}
+
+.customers-page > .space-y-6 {
+  gap: 2rem;
+}
+
+/* Better visual hierarchy for headings - exclude sidebar */
+main h1, main h2, main h3, main h4, main h5, main h6,
+.customer-content h1, .customer-content h2, .customer-content h3, .customer-content h4, .customer-content h5, .customer-content h6 {
+  font-weight: 600;
+  color: rgb(var(--primary-800));
+  line-height: 1.3;
+}
+
+/* Consistent badge styling */
+[data-badge], .badge {
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+/* Professional search and filter area */
+.customer-search-area {
+  background: white;
+  border: 1px solid rgb(var(--primary-200));
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Enhanced grid layouts */
+.grid-cols-6 {
+  gap: 1.5rem;
+}
+
+.grid-cols-3 {
+  gap: 2rem;
+}
+
+/* Professional loading states */
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--primary-100)) 0%,
+    rgb(var(--primary-50)) 50%,
+    rgb(var(--primary-100)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* === PRINT STYLES === */
+@media print {
+  .login-background {
+    background: white !important;
+  }
+  
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

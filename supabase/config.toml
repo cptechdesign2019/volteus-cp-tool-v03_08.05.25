@@ -1,0 +1,32 @@
+# Volteus CP Tool v03 - Supabase Cloud Configuration
+# This project points directly to Supabase Cloud (CP Tool Master DB)
+# No local Supabase instance needed
+
+project_id = "volteus-cp-tool-v03"
+
+[api]
+enabled = true
+# These settings are for cloud connection via CLI
+port = 3000
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+# These are placeholder values for cloud projects
+major_version = 17
+
+[db.migrations]
+# Enable migrations for cloud deployment
+enabled = true
+# Todd's migration files will be applied to cloud
+schema_paths = []
+
+[db.seed]
+enabled = false
+# No seed files needed for cloud deployment
+sql_paths = []
+
+# Note: This project connects to Supabase Cloud
+# Use: supabase link --project-ref ibjlzqmylyqawrefvgtv
+# Then: supabase db push
