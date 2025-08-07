@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { Upload, FileText, AlertCircle, CheckCircle, X, Users, Building, Home } from 'lucide-react'
+import { Upload, FileText, AlertCircle, AlertTriangle, CheckCircle, X, Users, Building, Home } from 'lucide-react'
 import { parseCustomerCSV } from '@/lib/customer-csv-parser'
 import { CustomerImportPreview } from './customer-import-preview'
 import { createCustomerAccount, createCustomerContact } from '@/lib/api/customers'
@@ -80,7 +80,7 @@ export function CustomerCSVImport({
       
       console.log('Parsing CSV with customer type:', selectedCustomerType)
       const startTime = Date.now()
-      const result = parseCustomerCSV(text, selectedCustomerType)
+      const result = parseCustomerCSV(text, selectedCustomerType || undefined) as any
       const processingTime = Date.now() - startTime
       
       console.log('Parse result:', result)
@@ -91,7 +91,7 @@ export function CustomerCSVImport({
         errors: result.errors,
         warnings: result.warnings,
         sampleProcessedData: result.data?.[0] || null,
-        customerType: selectedCustomerType
+        customerType: selectedCustomerType || undefined
       })
       
       if (!result.success) {
@@ -104,7 +104,7 @@ export function CustomerCSVImport({
           warnings: result.warnings || [],
           csvHeaders: headers,
           processingTime,
-          customerType: selectedCustomerType,
+          customerType: selectedCustomerType || undefined,
           sampleData: { headers, sampleRow }
         })
         

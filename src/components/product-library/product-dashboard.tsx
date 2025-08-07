@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AddProductModal } from '@/components/product-library/add-product-modal'
+import { ProductCsvImportModal } from '@/components/product-library/product-csv-import-modal'
 import { 
   Search, 
   Upload, 
@@ -46,9 +47,19 @@ export function ProductDashboard({ className }: ProductDashboardProps) {
   const [sortBy, setSortBy] = useState('product_name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isCsvImportOpen, setIsCsvImportOpen] = useState(false)
 
   // Debounce search to prevent excessive API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 600)
+
+  // Handle CSV import success
+  const handleCsvImportSuccess = () => {
+    // Refresh the data
+    refetchProducts()
+    refetchBrands()
+    refetchCategories()
+    refetchStats()
+  }
 
   // Check if we have active search/filter criteria
   const hasActiveFilters = Boolean(
@@ -81,19 +92,19 @@ export function ProductDashboard({ className }: ProductDashboardProps) {
     staleTime: 30000,
   })
 
-  const { data: brandsResult } = useQuery({
+  const { data: brandsResult, refetch: refetchBrands } = useQuery({
     queryKey: ['product-brands'],
     queryFn: () => getDistinctBrands(),
     staleTime: 300000, // 5 minutes
   })
 
-  const { data: categoriesResult } = useQuery({
+  const { data: categoriesResult, refetch: refetchCategories } = useQuery({
     queryKey: ['product-categories'],
     queryFn: () => getDistinctCategories(),
     staleTime: 300000, // 5 minutes
   })
 
-  const { data: statsResult } = useQuery({
+  const { data: statsResult, refetch: refetchStats } = useQuery({
     queryKey: ['product-statistics'],
     queryFn: () => getProductStatistics(),
     staleTime: 60000, // 1 minute
@@ -223,7 +234,11 @@ export function ProductDashboard({ className }: ProductDashboardProps) {
             <p className="text-primary-600 text-sm mt-1">Search and manage your product inventory</p>
           </div>
           <div className="flex items-center gap-3">
-            <Button className="btn-secondary" variant="outline">
+            <Button 
+              className="btn-secondary" 
+              variant="outline"
+              onClick={() => setIsCsvImportOpen(true)}
+            >
               <Upload className="h-4 w-4 mr-2" />
               Import CSV
             </Button>
@@ -493,6 +508,13 @@ export function ProductDashboard({ className }: ProductDashboardProps) {
         onClose={() => setIsAddModalOpen(false)}
         brands={brands}
         categories={categories}
+      />
+
+      {/* CSV Import Modal */}
+      <ProductCsvImportModal
+        isOpen={isCsvImportOpen}
+        onClose={() => setIsCsvImportOpen(false)}
+        onSuccess={handleCsvImportSuccess}
       />
     </div>
   )

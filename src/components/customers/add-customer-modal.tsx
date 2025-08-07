@@ -137,13 +137,17 @@ export function AddCustomerModal({ isOpen, onClose, onSuccess }: AddCustomerModa
   const handleAccountFormChange = (field: string, value: any) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
-      setAccountForm(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof prev],
-          [child]: value
+      setAccountForm(prev => {
+        const parentValue = (prev as any)[parent]
+        const safeParent = typeof parentValue === 'object' && parentValue !== null ? parentValue : {}
+        return {
+          ...prev,
+          [parent]: {
+            ...safeParent,
+            [child]: value
+          }
         }
-      }))
+      })
     } else {
       setAccountForm(prev => ({ ...prev, [field]: value }))
     }

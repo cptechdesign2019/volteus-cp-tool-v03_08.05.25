@@ -165,14 +165,9 @@ export function CustomerDashboard({ onStatsUpdate }: CustomerDashboardProps) {
     try {
       const result = await deleteAllCustomers()
       if (result.success) {
-        // Clear all caches first
-        const { CustomerCacheManager } = await import('@/lib/cache/customer-cache')
-        CustomerCacheManager.clear()
-        console.log('Cleared all customer caches')
-        
-        // Clear React Query cache too
+        // Clear React Query cache
         queryClient.clear()
-        console.log('React Query cache clear skipped (temporary)')
+        console.log('Cleared React Query cache')
         
         // Refresh everything
         refetchStats()
@@ -181,7 +176,8 @@ export function CustomerDashboard({ onStatsUpdate }: CustomerDashboardProps) {
         }
         alert('✅ All customer data has been deleted successfully!')
       } else {
-        alert(`❌ Failed to delete customers: ${result.error}`)
+        const message = (result as any).error ?? 'Unknown error'
+        alert(`❌ Failed to delete customers: ${message}`)
       }
     } catch (error) {
       console.error('Error deleting all customers:', error)
@@ -478,7 +474,7 @@ export function CustomerDashboard({ onStatsUpdate }: CustomerDashboardProps) {
               customers={[]}
               isLoading={true}
               onCustomerClick={handleCustomerClick}
-              customerTypeFilter={searchParams.customerType}
+              customerTypeFilter={searchParams.customerType || undefined}
             />
           )}
 

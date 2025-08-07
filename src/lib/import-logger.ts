@@ -19,10 +19,11 @@ interface ImportLog {
   status: 'success' | 'partial' | 'failed'
 }
 
-const MAX_LOGS = 5
+const MAX_LOGS = 10
 
 export class ImportLogger {
   private static logs: ImportLog[] = []
+  private static lastImportId: string | null = null
 
   static startImport(fileName: string, headers: string[], sampleRow?: any): string {
     const importId = `import_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -34,6 +35,7 @@ export class ImportLogger {
       sampleRow
     })
     
+    this.lastImportId = importId
     return importId
   }
 
@@ -72,7 +74,7 @@ export class ImportLogger {
     // Add to logs array
     this.logs.unshift(log)
 
-    // Keep only last 5 logs
+    // Keep only last 10 logs
     if (this.logs.length > MAX_LOGS) {
       this.logs = this.logs.slice(0, MAX_LOGS)
     }
@@ -96,6 +98,13 @@ export class ImportLogger {
     }
 
     return log
+  }
+
+  /**
+   * Returns the most recently started import id if available
+   */
+  static getLatestImportId(): string | null {
+    return this.lastImportId
   }
 
   static getAllLogs(): ImportLog[] {

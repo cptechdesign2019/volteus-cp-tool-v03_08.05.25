@@ -45,7 +45,9 @@ interface APIResponse<T = any> {
     created?: number
     updated?: number
     deleted?: number
+    failed?: number
     totalProducts?: number
+    errors?: string[]
   }
   timestamp: string
 }
@@ -103,19 +105,31 @@ function validateProductForAPI(productData: Partial<Product>, isUpdate = false):
   
   // Validate data types and constraints
   if (productData.dealer_price !== undefined && productData.dealer_price !== null) {
-    if (typeof productData.dealer_price !== 'number' || productData.dealer_price < 0) {
+    if (typeof productData.dealer_price === 'string') {
+      const numeric = parseFloat(productData.dealer_price.replace(/[$,]/g, ''))
+      if (isNaN(numeric) || numeric < 0) errors.push('Dealer price must be a positive number')
+      else productData.dealer_price = numeric as any
+    } else if (typeof productData.dealer_price !== 'number' || productData.dealer_price < 0) {
       errors.push('Dealer price must be a positive number')
     }
   }
   
   if (productData.msrp !== undefined && productData.msrp !== null) {
-    if (typeof productData.msrp !== 'number' || productData.msrp < 0) {
+    if (typeof productData.msrp === 'string') {
+      const numeric = parseFloat(productData.msrp.replace(/[$,]/g, ''))
+      if (isNaN(numeric) || numeric < 0) errors.push('MSRP must be a positive number')
+      else productData.msrp = numeric as any
+    } else if (typeof productData.msrp !== 'number' || productData.msrp < 0) {
       errors.push('MSRP must be a positive number')
     }
   }
   
   if (productData.map_price !== undefined && productData.map_price !== null) {
-    if (typeof productData.map_price !== 'number' || productData.map_price < 0) {
+    if (typeof productData.map_price === 'string') {
+      const numeric = parseFloat(productData.map_price.replace(/[$,]/g, ''))
+      if (isNaN(numeric) || numeric < 0) errors.push('MAP price must be a positive number')
+      else productData.map_price = numeric as any
+    } else if (typeof productData.map_price !== 'number' || productData.map_price < 0) {
       errors.push('MAP price must be a positive number')
     }
   }
@@ -381,67 +395,166 @@ export async function deleteProduct(id: string): Promise<APIResponse<null>> {
 }
 
 /**
- * Batch create multiple products
+ * Create multiple products in optimized batches (Based on Todd's Working Implementation)
+ * Processes large datasets in chunks for better performance and progress tracking
  */
-export async function batchCreateProducts(products: Omit<Product, 'id' | 'created_at' | 'updated_at'>[]): Promise<APIResponse<Product[]>> {
+export async function batchCreateProducts(
+  products: any[], 
+  onProgress?: (chunkIndex: number, totalChunks: number, processedCount: number) => void
+): Promise<APIResponse<Product[]>> {
   try {
-    const supabase = createClient()
-    
+    // Validate batch size
     if (!products || products.length === 0) {
       return createResponse(false, null, 'No products provided')
     }
 
     if (products.length > MAX_BATCH_SIZE) {
-      return createResponse(false, null, `Batch size exceeds maximum of ${MAX_BATCH_SIZE}`)
+      return createResponse(false, null, `Batch size exceeds maximum limit of ${MAX_BATCH_SIZE} products`)
     }
 
-    // Validate all products
-    const allErrors: string[] = []
+    // Validate each product
+    const validProducts: any[] = []
+    const errors: string[] = []
+    
+    console.log('Starting validation of', products.length, 'products')
+    
     products.forEach((product, index) => {
-      const errors = validateProductForAPI(product, false)
-      if (errors.length > 0) {
-        allErrors.push(`Product ${index + 1}: ${errors.join(', ')}`)
+      const validationErrors = validateProductForAPI(product)
+      if (validationErrors.length > 0) {
+        console.log(`Product ${index + 1} validation failed:`, validationErrors, 'Product data:', product)
+        errors.push(...validationErrors.map(err => `Product ${index + 1}: ${err}`))
+      } else {
+        validProducts.push(product)
       }
     })
-
-    if (allErrors.length > 0) {
-      return createResponse(false, null, `Validation errors: ${allErrors.join('; ')}`)
-    }
-
-    // Process in chunks for better performance
-    const results: Product[] = []
-    const chunks = []
     
-    for (let i = 0; i < products.length; i += OPTIMAL_CHUNK_SIZE) {
-      chunks.push(products.slice(i, i + OPTIMAL_CHUNK_SIZE))
+    console.log(`Validation complete: ${validProducts.length} valid, ${errors.length} failed`)
+
+    if (errors.length > 0 && validProducts.length === 0) {
+      return createResponse(
+        false,
+        null,
+        `Validation failed for all products: ${errors.slice(0, 5).join('; ')}${errors.length > 5 ? '...' : ''}`,
+        null,
+        { 
+          total: products.length,
+          created: 0,
+          failed: errors.length,
+          errors
+        }
+      )
     }
 
-    for (const chunk of chunks) {
-      const { data, error } = await supabase
+    // Get current user for audit fields
+    const supabase = createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    console.log('Auth check:', { user: user?.id, authError })
+    
+    if (!user) {
+      return createResponse(false, null, 'User not authenticated. Please log in and try again.')
+    }
+
+    // Add audit fields to each product
+    const productsWithAudit = validProducts.map(product => ({
+      ...product,
+      created_by: user.id,
+      updated_by: user.id
+    }))
+    
+    console.log('Products with audit fields:', {
+      count: productsWithAudit.length,
+      sample: productsWithAudit[0]
+    })
+
+    // Process in optimal chunks for better performance
+    const chunks = chunkArray(productsWithAudit, OPTIMAL_CHUNK_SIZE)
+    const totalChunks = chunks.length
+    let processedCount = 0
+    let allInsertedData: Product[] = []
+    
+    console.log(`Processing ${productsWithAudit.length} products in ${totalChunks} chunks of ${OPTIMAL_CHUNK_SIZE}`)
+
+    // Process each chunk sequentially
+    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+      const chunk = chunks[chunkIndex]
+      
+      console.log(`Processing chunk ${chunkIndex + 1}/${totalChunks} (${chunk.length} products)`)
+      
+      // Report progress
+      if (onProgress) {
+        onProgress(chunkIndex, totalChunks, processedCount)
+      }
+      
+      // Insert chunk with upsert strategy
+      const { data: chunkData, error: chunkError } = await supabase
         .from('products')
-        .insert(chunk)
+        .upsert(chunk, { 
+          onConflict: 'product_id',
+          ignoreDuplicates: false 
+        })
         .select()
-
-      if (error) {
-        return createResponse(false, null, error.message)
+      
+      if (chunkError) {
+        console.error(`Chunk ${chunkIndex + 1} failed:`, chunkError)
+        return createResponse(
+          false,
+          null,
+          `Batch insert failed at chunk ${chunkIndex + 1}: ${chunkError.message}`,
+          null,
+          { 
+            total: products.length,
+            created: processedCount,
+            failed: products.length - processedCount,
+            errors: [...errors, chunkError.message]
+          }
+        )
       }
-
-      if (data) {
-        results.push(...data)
+      
+      allInsertedData.push(...(chunkData || []))
+      processedCount += chunk.length
+      
+      console.log(`Chunk ${chunkIndex + 1} completed: ${chunk.length} products inserted`)
+      
+      // Small delay between chunks to prevent overwhelming the database
+      if (chunkIndex < totalChunks - 1) {
+        await new Promise(resolve => setTimeout(resolve, 100))
       }
     }
+    
+    // Final progress report
+    if (onProgress) {
+      onProgress(totalChunks, totalChunks, processedCount)
+    }
+    
+    console.log('Insert complete:', { inserted: allInsertedData.length, failed: errors.length })
 
     return createResponse(
       true,
-      results,
+      allInsertedData,
       null,
       null,
-      { created: results.length, total: results.length }
+      {
+        total: products.length,
+        created: allInsertedData.length,
+        failed: errors.length,
+        errors: errors.length > 0 ? errors : undefined
+      }
     )
-  } catch (error) {
-    console.error('Batch create products error:', error)
-    return createResponse(false, null, error instanceof Error ? error.message : 'Failed to batch create products')
+  } catch (error: any) {
+    console.error('Exception in batchCreateProducts:', error)
+    return createResponse(false, null, error.message || 'Failed to create products')
   }
+}
+
+/**
+ * Helper function to split array into chunks
+ */
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = []
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize))
+  }
+  return chunks
 }
 
 /**
