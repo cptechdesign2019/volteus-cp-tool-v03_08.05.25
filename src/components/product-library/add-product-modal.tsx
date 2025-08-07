@@ -343,21 +343,31 @@ export function AddProductModal({
 
                 <div className="space-y-2">
                   <Label htmlFor="brand">Brand *</Label>
-                  <Select
-                    value={formData.brand}
-                    onValueChange={(value) => handleInputChange('brand', value)}
-                  >
-                    <SelectTrigger className={errors.brand ? 'border-red-300' : ''}>
-                      <SelectValue placeholder="Select brand" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {brands.map((brand) => (
-                        <SelectItem key={brand} value={brand}>
-                          {brand}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {brands.length > 0 ? (
+                    <Select
+                      value={formData.brand}
+                      onValueChange={(value) => handleInputChange('brand', value)}
+                    >
+                      <SelectTrigger className={errors.brand ? 'border-red-300' : ''}>
+                        <SelectValue placeholder="Select brand" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {brands.map((brand) => (
+                          <SelectItem key={brand} value={brand}>
+                            {brand}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      id="brand"
+                      value={formData.brand}
+                      onChange={(e) => handleInputChange('brand', e.target.value)}
+                      placeholder="Enter brand name (e.g., Samsung, Sony, Crestron)"
+                      className={errors.brand ? 'border-red-300' : ''}
+                    />
+                  )}
                   {errors.brand && (
                     <p className="text-sm text-red-600">{errors.brand}</p>
                   )}
@@ -365,21 +375,31 @@ export function AddProductModal({
 
                 <div className="space-y-2">
                   <Label htmlFor="category">Category *</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) => handleInputChange('category', value)}
-                  >
-                    <SelectTrigger className={errors.category ? 'border-red-300' : ''}>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {categories.length > 0 ? (
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) => handleInputChange('category', value)}
+                    >
+                      <SelectTrigger className={errors.category ? 'border-red-300' : ''}>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      id="category"
+                      value={formData.category}
+                      onChange={(e) => handleInputChange('category', e.target.value)}
+                      placeholder="Enter category (e.g., Displays, Audio, Control Systems)"
+                      className={errors.category ? 'border-red-300' : ''}
+                    />
+                  )}
                   {errors.category && (
                     <p className="text-sm text-red-600">{errors.category}</p>
                   )}
