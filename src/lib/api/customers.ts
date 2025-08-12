@@ -1,6 +1,39 @@
 import { createClient } from '@/lib/supabase/client'
 
 // Real API functions for customer management
+
+/**
+ * Get all customer accounts
+ */
+export async function getCustomerAccounts() {
+  try {
+    const supabase = createClient()
+    
+    const { data, error } = await supabase
+      .from('customer_accounts')
+      .select('*')
+      .order('company_name', { ascending: true })
+    
+    if (error) {
+      console.error('Error fetching customer accounts:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+    
+    return {
+      success: true,
+      data: data || []
+    }
+  } catch (error: any) {
+    console.error('Exception fetching customer accounts:', error)
+    return {
+      success: false,
+      error: error.message || 'Failed to fetch customer accounts'
+    }
+  }
+}
 export async function deleteAllCustomers() {
   console.log('Delete all customers API called')
   return { success: true }

@@ -4,6 +4,11 @@
  */
 
 import { vi } from 'vitest'
+import { config } from 'dotenv'
+import path from 'path'
+
+// Load environment variables from .env.local
+config({ path: path.resolve(process.cwd(), '.env.local') })
 
 // Mock localStorage for testing with in-memory store
 const store: Record<string, string> = {}
@@ -31,14 +36,15 @@ global.console = {
   debug: vi.fn()
 }
 
-// Mock window.URL for URL validation tests
-global.URL = class URL {
-  constructor(public href: string) {
-    if (!href.match(/^https?:\/\/.+/)) {
-      throw new Error('Invalid URL')
-    }
-  }
-}
+// Mock window.URL for URL validation tests (but allow real URLs for Supabase)
+// Use the native URL constructor to avoid breaking Supabase client
+// global.URL = class URL {
+//   constructor(public href: string) {
+//     if (!href.match(/^https?:\/\/.+/)) {
+//       throw new Error('Invalid URL')
+//     }
+//   }
+// }
 
 // Mock fetch for API tests
 global.fetch = vi.fn()
