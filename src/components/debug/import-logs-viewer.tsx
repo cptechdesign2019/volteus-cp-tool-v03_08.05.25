@@ -14,13 +14,15 @@ import {
   AlertTriangle, 
   Trash2,
   Download,
-  Eye
+  Eye,
+  Copy as CopyIcon
 } from 'lucide-react'
 import ImportLogger from '@/lib/import-logger'
 
 function ImportLogsViewer() {
   const [logs, setLogs] = React.useState(ImportLogger.getAllLogs())
   const [selectedLog, setSelectedLog] = React.useState<any>(null)
+  const [copyStatus, setCopyStatus] = React.useState<'idle' | 'copying' | 'copied'>('idle')
 
   const refreshLogs = () => {
     setLogs(ImportLogger.getAllLogs())
@@ -71,6 +73,28 @@ function ImportLogsViewer() {
     linkElement.click()
   }
 
+  const copyLogToClipboard = async (log: any) => {
+    setCopyStatus('copying')
+    const logJson = JSON.stringify(log, null, 2)
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(logJson)
+      } else {
+        const textArea = document.createElement('textarea')
+        textArea.value = logJson
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+      }
+      setCopyStatus('copied')
+      setTimeout(() => setCopyStatus('idle'), 1500)
+    } catch (err) {
+      console.warn('Failed to copy log to clipboard', err)
+      setCopyStatus('idle')
+    }
+  }
+
   return (
     <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -80,7 +104,7 @@ function ImportLogsViewer() {
             CSV Import Logs
           </h2>
           <p className="text-gray-600 mt-1">
-            Debug CSV import issues with detailed import logs (last 5 imports)
+            Debug CSV import issues with detailed import logs (last 10 imports)
           </p>
         </div>
         <div className="flex gap-2">
@@ -159,16 +183,32 @@ function ImportLogsViewer() {
               <CardTitle className="text-lg flex items-center justify-between">
                 Import Details
                 {selectedLog && (
-                  <Button 
-                    onClick={() => downloadLogAsJson(selectedLog)}
-                    variant="outline" 
-                    size="sm"
-                  >
-                    <Download className="h-4 w-4 mr-1" />
-                    Download
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => copyLogToClipboard(selectedLog)}
+                      variant="outline" 
+                      size="sm"
+                      title="Copy JSON to clipboard"
+                      disabled={copyStatus === 'copying'}
+                    >
+                      <CopyIcon className="h-4 w-4 mr-1" />
+                      {copyStatus === 'copying' ? 'Copying...' : copyStatus === 'copied' ? 'Copied!' : 'Copy'}
+                    </Button>
+                    <Button 
+                      onClick={() => downloadLogAsJson(selectedLog)}
+                      variant="outline" 
+                      size="sm"
+                      title="Download JSON file"
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      Download
+                    </Button>
+                  </div>
                 )}
               </CardTitle>
+              {copyStatus === 'copied' && (
+                <p className="text-sm text-green-600 mt-1">Copied to clipboard</p>
+              )}
             </CardHeader>
             <CardContent>
               {selectedLog ? (

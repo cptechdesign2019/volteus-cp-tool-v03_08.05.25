@@ -35,6 +35,19 @@
 * **Owner**: Dev team – address after Task 7 implementation.
 * **Target revisit**: After CSV Import Integration & Polish (Spec 05, Task 7).
 
+### ⚠️  Product Library: Display Product Images in Search Results (High)
+* **Context**: Product Library search results currently show text-only information but the `image_url` field exists in the database and could significantly improve UX by showing product visuals.
+* **Why deferred**: Core search/filter functionality is working; focusing on completing fundamental CRUD operations before visual enhancements.
+* **Acceptance**:
+  1. Product search results display thumbnail images when `image_url` is available.
+  2. Graceful fallback to placeholder/icon when no image URL exists.
+  3. Images are properly sized and styled to fit the table layout.
+  4. Images load efficiently with proper error handling for broken URLs.
+  5. Optional: Hover/click to view larger image preview.
+* **Owner**: Dev team.
+* **Target revisit**: After core Product Library CRUD operations are stable.
+* **Business Impact**: MEDIUM - Enhanced visual product identification for users.
+
 ### ⚠️  Fix Database Restoration Script (Critical - Production Blocker)
 * **Context**: The `restore-critical-data.js` script fails to restore products after database resets, causing persistent empty error objects during insertion. This forces manual re-import of customer/product data after every reset, which is unsustainable for production.
 * **Why deferred**: Manual UI-based import works as temporary workaround; focusing on core quote builder functionality to maintain development momentum.

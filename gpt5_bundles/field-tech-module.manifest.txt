@@ -1,0 +1,13 @@
+INCLUDE
+/home/aaron-cp-laptop/software-projects/field-tech-ui-tc-08-08-25/field-module/**
+
+EXCLUDES
+**/node_modules/**
+**/.git/**
+**/.env*
+**/*.png
+**/*.jpg
+**/*.jpeg
+
+NOTES
+- Visual styling should follow v03 brand tokens when integrated.

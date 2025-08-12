@@ -5,8 +5,9 @@
 
 interface ImportLog {
   id: string
+  importId?: string
   timestamp: string
-  fileName: string
+  filename: string
   totalRows: number
   successfulRows: number
   failedRows: number
@@ -17,12 +18,14 @@ interface ImportLog {
   processingTime: number
   customerType?: string
   status: 'success' | 'partial' | 'failed'
+  mappingInfo?: any
 }
 
-const MAX_LOGS = 5
+const MAX_LOGS = 10
 
 export class ImportLogger {
   private static logs: ImportLog[] = []
+  private static lastImportId: string | null = null
 
   static startImport(fileName: string, headers: string[], sampleRow?: any): string {
     const importId = `import_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -34,6 +37,35 @@ export class ImportLogger {
       sampleRow
     })
     
+    this.lastImportId = importId
+
+    // Create a provisional log entry immediately so UI/tests can reference it
+    const provisionalLog: ImportLog = {
+      id: importId,
+      importId,
+      timestamp: new Date().toISOString(),
+      filename: fileName,
+      totalRows: 0,
+      successfulRows: 0,
+      failedRows: 0,
+      errors: [],
+      warnings: [],
+      csvHeaders: headers || [],
+      sampleData: sampleRow,
+      processingTime: 0,
+      customerType: undefined,
+      status: 'partial'
+    }
+    // Prepend and trim to MAX_LOGS
+    this.logs.unshift(provisionalLog)
+    if (this.logs.length > MAX_LOGS) {
+      this.logs = this.logs.slice(0, MAX_LOGS)
+    }
+    // Persist
+    try {
+      localStorage.setItem('csv_import_logs', JSON.stringify(this.logs))
+    } catch {}
+
     return importId
   }
 
@@ -54,8 +86,9 @@ export class ImportLogger {
   ) {
     const log: ImportLog = {
       id: importId,
+      importId,
       timestamp: new Date().toISOString(),
-      fileName,
+      filename: fileName,
       totalRows: result.totalRows,
       successfulRows: result.successfulRows,
       failedRows: result.failedRows,
@@ -72,7 +105,7 @@ export class ImportLogger {
     // Add to logs array
     this.logs.unshift(log)
 
-    // Keep only last 5 logs
+    // Keep only last 10 logs
     if (this.logs.length > MAX_LOGS) {
       this.logs = this.logs.slice(0, MAX_LOGS)
     }
@@ -98,19 +131,33 @@ export class ImportLogger {
     return log
   }
 
+  /**
+   * Returns the most recently started import id if available
+   */
+  static getLatestImportId(): string | null {
+    return this.lastImportId
+  }
+
+  // Backward-compat alias used in some tests
+  static getLastImportId(): string | null {
+    return this.getLatestImportId()
+  }
+
   static getAllLogs(): ImportLog[] {
-    // Load from localStorage if empty
-    if (this.logs.length === 0) {
-      try {
-        const saved = localStorage.getItem('csv_import_logs')
-        if (saved) {
-          this.logs = JSON.parse(saved)
-        }
-      } catch (error) {
-        console.warn('Failed to load import logs from localStorage:', error)
-      }
+    // Always hydrate from localStorage to ensure consistency between sessions/tests
+    try {
+      const saved = localStorage.getItem('csv_import_logs')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        // Ensure parsed value is an array of logs
+        this.logs = Array.isArray(parsed) ? parsed : []
+      } // if nothing saved, keep current in-memory state
+    } catch (error) {
+      console.warn('Failed to load import logs from localStorage:', error)
+      // On malformed data, reset logs
+      this.logs = []
     }
-    
+
     return this.logs
   }
 
@@ -133,10 +180,20 @@ export class ImportLogger {
       mappedFields: Object.keys(mappedData),
       mappedData: mappedData
     })
+
+    // Attach mapping info to the corresponding log entry and persist
+    const index = this.logs.findIndex(l => l.id === importId)
+    if (index !== -1) {
+      this.logs[index] = { ...this.logs[index], mappingInfo: mappedData }
+      try {
+        localStorage.setItem('csv_import_logs', JSON.stringify(this.logs))
+      } catch {}
+    }
   }
 
   static clearLogs() {
     this.logs = []
+    this.lastImportId = null
     try {
       localStorage.removeItem('csv_import_logs')
     } catch (error) {

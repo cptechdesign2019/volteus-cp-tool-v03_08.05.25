@@ -1,0 +1,19 @@
+INCLUDE
+/home/aaron-cp-laptop/software-projects/av-management-tool-v1-tc_08.04.2025/.agent-os/product/page-briefs/**
+/home/aaron-cp-laptop/software-projects/av-management-tool-v1-tc_08.04.2025/.agent-os/specs/**
+/home/aaron-cp-laptop/software-projects/av-management-tool-v1-tc_08.04.2025/supabase/migrations/**
+/home/aaron-cp-laptop/software-projects/av-management-tool-v1-tc_08.04.2025/performance-optimization-summary.md
+/home/aaron-cp-laptop/software-projects/av-management-tool-v1-tc_08.04.2025/customer-performance-summary.md
+/home/aaron-cp-laptop/software-projects/av-management-tool-v1-tc_08.04.2025/product-library-ui-improvements.md
+
+EXCLUDES
+**/node_modules/**
+**/.next/**
+**/.git/**
+**/*.css
+**/.env*
+
+NOTES
+- Use v03 CSS only; this reference excludes stylesheets
+- Local dev port: 3008
+- Apply SQL in Supabase SQL Editor; keep RLS

@@ -14,12 +14,13 @@ import {
   ChevronsLeft,
   ChevronsRight,
   LogOut,
-  Bug
+  Bug,
+  Target
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Leads', href: '/leads', icon: Users },
+  { name: 'Leads', href: '/leads', icon: Target },
   { name: 'Quotes', href: '/quotes', icon: FileText },
   { name: 'Customers', href: '/customers', icon: UserCheck },
   { name: 'Product Library', href: '/product-library', icon: Package },
