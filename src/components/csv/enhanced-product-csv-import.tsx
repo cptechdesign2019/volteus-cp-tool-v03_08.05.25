@@ -42,6 +42,7 @@ export function EnhancedProductCSVImport({
   const [parseResult, setParseResult] = useState<ParseResult | null>(null)
   const [mappingIssues, setMappingIssues] = useState<ColumnMappingResult | null>(null)
   const [customMapping, setCustomMapping] = useState<{ [key: string]: string }>({})
+  const [uploadedHeaders, setUploadedHeaders] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [importProgress, setImportProgress] = useState<ImportProgress | null>(null)
   const [importResult, setImportResult] = useState<any>(null)
@@ -77,6 +78,7 @@ export function EnhancedProductCSVImport({
       const lines = text.split('\n')
       const headers = lines[0] ? lines[0].split(',').map(h => h.trim().replace(/['"]/g, '')) : []
       const sampleRow = lines[1] ? lines[1].split(',').map(h => h.trim().replace(/['"]/g, '')) : []
+      setUploadedHeaders(headers)
       
       // Start import logging
       const importId = ImportLogger.startImport(file.name, headers, sampleRow)
@@ -159,19 +161,55 @@ export function EnhancedProductCSVImport({
   const handleMappingComplete = (mapping: { [key: string]: string }) => {
     if (!file) return
     
-    // Re-parse with custom mapping
+    // Convert UI mapping (Expected -> CSV Header) into parser mapping (CSV Header -> DB field)
+    const expectedToDb: { [key: string]: string } = {
+      'Product ID': 'product_id',
+      'Brand': 'brand',
+      'Category': 'category',
+      'Product Name': 'product_name',
+      'Product Number': 'product_number',
+      'Description': 'description',
+      'Dealer': 'dealer_price',
+      'MSRP': 'msrp',
+      'MAP': 'map_price',
+      'Primary Distributor': 'primary_distributor',
+      'Secondary Distributor': 'secondary_distributor',
+      'Tertiary Distributor': 'tertiary_distributor',
+      'Spec Sheet URL': 'spec_sheet_url',
+      'Image URL': 'image_url',
+    }
+
+    const toParserMapping = (uiMapping: { [key: string]: string }): { [key: string]: string } => {
+      const out: { [key: string]: string } = {}
+      Object.entries(uiMapping).forEach(([expected, csvHeader]) => {
+        if (csvHeader && expectedToDb[expected]) {
+          out[csvHeader] = expectedToDb[expected]
+        }
+      })
+      // Also include identity for any expected headers present verbatim in the file
+      uploadedHeaders.forEach(h => {
+        if (expectedToDb[h] && !out[h]) {
+          out[h] = expectedToDb[h]
+        }
+      })
+      return out
+    }
+
+    const parserMapping = toParserMapping(mapping)
+
+    // Re-parse with computed mapping
     file.text().then(text => {
-      console.log('Re-parsing with custom mapping:', mapping)
-      const result = parseProductCSV(text, mapping)
+      console.log('Re-parsing with custom mapping (parser format):', parserMapping)
+      const result = parseProductCSV(text, parserMapping)
       
       if (result.success) {
         setParseResult(result)
-        setCustomMapping(mapping)
+        setCustomMapping(parserMapping)
         setStep('preview')
         
         if (currentImportId) {
           ImportLogger.logDataMapping(currentImportId, result.headers, {
-            customMapping: mapping,
+            customMapping: parserMapping,
             totalRows: result.data?.length || 0,
             mappingResolved: true
           })
@@ -212,14 +250,21 @@ export function EnhancedProductCSVImport({
       const result = await batchCreateProducts(parseResult.data, onProgress)
 
       setImportProgress({
-        stage: 'Import complete!',
+        stage: result.success ? 'Import complete!' : 'Import failed!',
         processed: parseResult.data.length,
         total: parseResult.data.length,
         errors: result.summary?.failed || 0
       })
 
       setImportResult(result)
-      setStep('complete')
+      
+      // Set step based on success/failure
+      if (result.success) {
+        setStep('complete')
+      } else {
+        setError(result.message || 'Import failed due to validation errors')
+        setStep('error')
+      }
 
       // Log final results
       if (currentImportId) {
@@ -235,13 +280,16 @@ export function EnhancedProductCSVImport({
         })
       }
 
-      if (onImportSuccess && result.success) {
+      // Call success/error callbacks appropriately
+      if (result.success && onImportSuccess) {
         onImportSuccess({
           total: parseResult.data.length,
           successful: result.summary?.created || 0,
           failed: result.summary?.failed || 0,
           errors: result.summary?.errors || []
         })
+      } else if (!result.success && onImportError) {
+        onImportError(result.message || 'Import failed due to validation errors')
       }
 
     } catch (error) {
@@ -303,7 +351,7 @@ export function EnhancedProductCSVImport({
     return (
       <ColumnMappingDialog
         mappingIssues={mappingIssues}
-        csvHeaders={parseResult?.headers || []}
+        csvHeaders={uploadedHeaders}
         onComplete={handleMappingComplete}
         onCancel={resetImport}
       />
@@ -502,6 +550,42 @@ function ColumnMappingDialog({ mappingIssues, csvHeaders, onComplete, onCancel }
     }
   }
 
+  // Prefill from suggestions when uniquely resolvable
+  React.useEffect(() => {
+    const next: { [key: string]: string } = { ...mapping }
+    requiredMappings.forEach((expected) => {
+      // If CSV already has the expected header, use it
+      if (csvHeaders.includes(expected)) {
+        next[expected] = expected
+        return
+      }
+      const suggestions = mappingIssues.suggestedMappings?.[expected] || []
+      // Choose the first suggestion that exactly matches a CSV header
+      const match = suggestions.find(s => csvHeaders.includes(s))
+      if (match) {
+        next[expected] = match
+      }
+    })
+    // Only update if anything changed
+    const changed = requiredMappings.some(k => next[k] && next[k] !== mapping[k])
+    if (changed) setMapping(next)
+  }, [csvHeaders, mappingIssues, requiredMappings])
+
+  // Helper to build suggested mapping (verbatim header first, then suggestion)
+  const buildSuggestedMapping = (): { [key: string]: string } => {
+    const auto: { [key: string]: string } = {}
+    requiredMappings.forEach((expected) => {
+      if (csvHeaders.includes(expected)) {
+        auto[expected] = expected
+        return
+      }
+      const suggestions = mappingIssues.suggestedMappings?.[expected] || []
+      const match = suggestions.find(s => csvHeaders.includes(s))
+      if (match) auto[expected] = match
+    })
+    return auto
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -527,6 +611,31 @@ function ColumnMappingDialog({ mappingIssues, csvHeaders, onComplete, onCancel }
 
       <div className="space-y-4">
         <h4 className="font-medium">Required Mappings</h4>
+        <div className="flex items-center gap-2 text-sm text-blue-600">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              const auto = buildSuggestedMapping()
+              setMapping(prev => ({ ...prev, ...auto }))
+            }}
+          >
+            Use Suggested Mapping
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              const auto = buildSuggestedMapping()
+              setMapping(prev => ({ ...prev, ...auto }))
+              // If all required resolved, continue automatically
+              const ok = requiredMappings.every(col => (auto[col] && auto[col] !== '') || (mapping[col] && mapping[col] !== ''))
+              if (ok) onComplete({ ...mapping, ...auto })
+            }}
+          >
+            Accept All & Continue
+          </Button>
+          {!isValid && <span>Fill all four required fields to continue</span>}
+        </div>
         {requiredMappings.map(expectedColumn => (
           <div key={expectedColumn} className="flex items-center gap-4">
             <div className="w-32 text-sm font-medium">{expectedColumn}</div>

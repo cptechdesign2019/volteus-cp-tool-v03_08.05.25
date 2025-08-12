@@ -42,6 +42,7 @@ Comprehensive testing plan for the Enhanced Product CSV Importer to ensure relia
 - [ ] Test which fields get updated on conflict
 - [ ] Mixed new/existing product imports
 - [ ] Product ID collision scenarios
+- [x] Duplicate Product ID within single CSV triggers row-level error and partial success
 
 ### 5. Debug Logging Tests 🐛
 - [ ] Verify all import attempts are logged
@@ -50,6 +51,7 @@ Comprehensive testing plan for the Enhanced Product CSV Importer to ensure relia
 - [ ] Download JSON feature testing
 - [ ] Log data completeness validation
 - [ ] Error scenario logging accuracy
+- [x] Mapping info and sample data persisted in logs
 
 ### 6. Data Integrity Tests 🗃️
 - [ ] Verify all imported data stored correctly
@@ -71,3 +73,11 @@ Comprehensive testing plan for the Enhanced Product CSV Importer to ensure relia
 **Status:** Backlogged for future sprint
 **Dependencies:** Enhanced CSV importer implementation complete
 **Estimated Effort:** 2-3 hours comprehensive testing
+
+## New Backlog Items (2025-08-08)
+
+- [ ] Import valid rows only (toggle when some rows fail)
+- [ ] Download error report (CSV/JSON) with row numbers and messages
+- [ ] Error dialog enhancements: show summary counts, link to Debug Logs
+- [ ] Revisit CSS/spacing for mapping dialog and error states (align with design system)
+- [ ] Fix Customers: Edit Customer page not working (open, load, save) — needs full triage and repair

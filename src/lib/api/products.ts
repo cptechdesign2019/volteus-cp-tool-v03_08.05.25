@@ -92,7 +92,7 @@ function createResponse<T>(
 /**
  * Validate required product fields for API operations
  */
-function validateProductForAPI(productData: Partial<Product>, isUpdate = false): string[] {
+export function validateProductForAPI(productData: Partial<Product>, isUpdate = false): string[] {
   const errors: string[] = []
   
   if (!isUpdate) {
@@ -103,12 +103,16 @@ function validateProductForAPI(productData: Partial<Product>, isUpdate = false):
     if (!productData.product_name) errors.push('Product Name is required')
   }
   
-  // Validate data types and constraints
+  // Validate and convert data types and constraints
   if (productData.dealer_price !== undefined && productData.dealer_price !== null) {
     if (typeof productData.dealer_price === 'string') {
-      const numeric = parseFloat(productData.dealer_price.replace(/[$,]/g, ''))
-      if (isNaN(numeric) || numeric < 0) errors.push('Dealer price must be a positive number')
-      else productData.dealer_price = numeric as any
+      const cleanValue = productData.dealer_price.replace(/[$,\s]/g, '')
+      const numeric = parseFloat(cleanValue)
+      if (isNaN(numeric) || numeric < 0) {
+        errors.push('Dealer price must be a positive number')
+      } else {
+        productData.dealer_price = numeric as any
+      }
     } else if (typeof productData.dealer_price !== 'number' || productData.dealer_price < 0) {
       errors.push('Dealer price must be a positive number')
     }
@@ -116,9 +120,13 @@ function validateProductForAPI(productData: Partial<Product>, isUpdate = false):
   
   if (productData.msrp !== undefined && productData.msrp !== null) {
     if (typeof productData.msrp === 'string') {
-      const numeric = parseFloat(productData.msrp.replace(/[$,]/g, ''))
-      if (isNaN(numeric) || numeric < 0) errors.push('MSRP must be a positive number')
-      else productData.msrp = numeric as any
+      const cleanValue = productData.msrp.replace(/[$,\s]/g, '')
+      const numeric = parseFloat(cleanValue)
+      if (isNaN(numeric) || numeric < 0) {
+        errors.push('MSRP must be a positive number')
+      } else {
+        productData.msrp = numeric as any
+      }
     } else if (typeof productData.msrp !== 'number' || productData.msrp < 0) {
       errors.push('MSRP must be a positive number')
     }
@@ -126,9 +134,13 @@ function validateProductForAPI(productData: Partial<Product>, isUpdate = false):
   
   if (productData.map_price !== undefined && productData.map_price !== null) {
     if (typeof productData.map_price === 'string') {
-      const numeric = parseFloat(productData.map_price.replace(/[$,]/g, ''))
-      if (isNaN(numeric) || numeric < 0) errors.push('MAP price must be a positive number')
-      else productData.map_price = numeric as any
+      const cleanValue = productData.map_price.replace(/[$,\s]/g, '')
+      const numeric = parseFloat(cleanValue)
+      if (isNaN(numeric) || numeric < 0) {
+        errors.push('MAP price must be a positive number')
+      } else {
+        productData.map_price = numeric as any
+      }
     } else if (typeof productData.map_price !== 'number' || productData.map_price < 0) {
       errors.push('MAP price must be a positive number')
     }

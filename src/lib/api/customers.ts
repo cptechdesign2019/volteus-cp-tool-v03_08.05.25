@@ -88,3 +88,89 @@ export async function createCustomerContact(contactData: any) {
     }
   }
 }
+
+export async function updateCustomerAccount(customerId: string, accountData: any) {
+  try {
+    const supabase = createClient()
+    
+    console.log('Updating customer account:', customerId, 'with data:', accountData)
+    
+    const updateData: any = {}
+    if (accountData.company_name !== undefined) updateData.company_name = accountData.company_name
+    if (accountData.customer_type !== undefined) updateData.customer_type = accountData.customer_type
+    if (accountData.account_notes !== undefined) updateData.account_notes = accountData.account_notes
+    if (accountData.tags !== undefined) updateData.tags = accountData.tags || []
+    if (accountData.billing_address !== undefined) updateData.billing_address = accountData.billing_address || {}
+    if (accountData.service_address !== undefined) updateData.service_address = accountData.service_address || {}
+    
+    const { data, error } = await supabase
+      .from('customer_accounts')
+      .update(updateData)
+      .eq('id', customerId)
+      .select()
+      .single()
+    
+    if (error) {
+      console.error('Error updating customer account:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+    
+    console.log('Customer account updated successfully:', data)
+    return {
+      success: true,
+      data
+    }
+  } catch (error: any) {
+    console.error('Exception updating customer account:', error)
+    return {
+      success: false,
+      error: error.message || 'Failed to update customer account'
+    }
+  }
+}
+
+export async function updateCustomerContact(contactId: string, contactData: any) {
+  try {
+    const supabase = createClient()
+    
+    console.log('Updating customer contact:', contactId, 'with data:', contactData)
+    
+    const updateData: any = {}
+    if (contactData.contact_name !== undefined) updateData.contact_name = contactData.contact_name
+    if (contactData.email !== undefined) updateData.email = contactData.email || null
+    if (contactData.phone !== undefined) updateData.phone = contactData.phone || null
+    if (contactData.role !== undefined) updateData.role = contactData.role || null
+    if (contactData.is_primary_contact !== undefined) updateData.is_primary_contact = contactData.is_primary_contact
+    if (contactData.contact_notes !== undefined) updateData.contact_notes = contactData.contact_notes || null
+    
+    const { data, error } = await supabase
+      .from('customer_contacts')
+      .update(updateData)
+      .eq('id', contactId)
+      .select()
+      .single()
+    
+    if (error) {
+      console.error('Error updating customer contact:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+    
+    console.log('Customer contact updated successfully:', data)
+    return {
+      success: true,
+      data
+    }
+  } catch (error: any) {
+    console.error('Exception updating customer contact:', error)
+    return {
+      success: false,
+      error: error.message || 'Failed to update customer contact'
+    }
+  }
+}

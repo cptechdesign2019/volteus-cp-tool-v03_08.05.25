@@ -1,0 +1,29 @@
+INCLUDE
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/package.json
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/next.config.mjs
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/tsconfig.json
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/postcss.config.mjs
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/tailwind.config.js
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/vitest.config.ts
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/env.template
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/src/**
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/supabase/migrations/**
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/docs/test-foundation-implementation.md
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/docs/enhanced-csv-importer-implementation.md
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/.agent-os/roadmap/css-design-system-plan.md
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/scripts/seed-sample-products.sql
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/scripts/copy-product-data.js
+/home/aaron-cp-laptop/software-projects/volteus-cp-tool-v03_08.05.25/GPTHandoff.md
+
+EXCLUDES
+**/node_modules/**
+**/.next/**
+**/.git/**
+**/.env*
+**/*.png
+**/*.jpg
+**/*.jpeg
+
+NOTES
+- Default port: 3008
+- CSS authority: `src/app/globals.css` + `tailwind.config.js` only

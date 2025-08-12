@@ -245,7 +245,7 @@ export function parseProductCSV(csvContent: string, customMapping?: { [key: stri
   const summary = generateSummary(validatedData)
 
   return {
-    success: errors.length === 0 || validatedData.length > 0,
+    success: errors.length === 0,
     data: validatedData,
     headers: csvHeaders,
     errors,
@@ -283,11 +283,13 @@ function transformRowData(row: any, columnMapping: { [key: string]: string }): a
     } else {
       // Handle empty strings consistently - convert to null for URL fields, empty string for others
       if (dbField === 'spec_sheet_url' || dbField === 'image_url') {
-        if (!value || value.trim() === '' || !/^https?:\/\//i.test(value.trim())) {
-          // If empty or not starting with http/https, store as null to bypass DB constraint
+        const trimmed = typeof value === 'string' ? value.trim() : value
+        if (!trimmed || trimmed === '') {
+          // Empty stays null
           transformed[dbField] = null
         } else {
-          transformed[dbField] = value.trim()
+          // Keep non-empty as-is (trimmed). Validation will enforce proper URL format
+          transformed[dbField] = trimmed
         }
       } else {
         transformed[dbField] = value === '' ? '' : value
@@ -306,7 +308,7 @@ function validateProductData(productData: any, rowNumber: number): { isValid: bo
 
   Object.entries(FIELD_CONSTRAINTS).forEach(([field, constraints]) => {
     const value = productData[field]
-    const fieldLabel = field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+    const fieldLabel = humanizeFieldLabel(field)
 
     // Check required fields
     if (constraints.required && (!value || value === '')) {
@@ -338,7 +340,8 @@ function validateProductData(productData: any, rowNumber: number): { isValid: bo
 
     // Basic URL validation
     if (constraints.type === 'url' && value) {
-      if (typeof value === 'string' && !value.match(/^https?:\/\/.+/)) {
+      // Stricter URL format: require http(s) scheme and at least one dot in host or path
+      if (typeof value === 'string' && !/^https?:\/\/[\w.-]+\.[\w.-]+/.test(value)) {
         errors.push(`Row ${rowNumber}: ${fieldLabel} must be a valid URL starting with http:// or https://`)
       }
     }
@@ -348,6 +351,17 @@ function validateProductData(productData: any, rowNumber: number): { isValid: bo
     isValid: errors.length === 0,
     errors
   }
+}
+
+function humanizeFieldLabel(field: string): string {
+  const words = field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  let label = words.join(' ')
+  // Normalize common acronyms
+  label = label.replace(/\bId\b/g, 'ID')
+  label = label.replace(/\bUrl\b/g, 'URL')
+  label = label.replace(/\bMsrp\b/g, 'MSRP')
+  label = label.replace(/\bMap\b/g, 'MAP')
+  return label
 }
 
 /**

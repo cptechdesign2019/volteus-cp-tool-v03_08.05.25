@@ -250,3 +250,17 @@ const MAX_LOGS = 10  // Upgraded from 5
 6. ✅ **Production ready** - Comprehensive validation and error boundaries
 
 **The Enhanced Product CSV Importer is now production-ready and significantly more robust than the previous implementation.**
+
+---
+
+## 2025-08-08 Updates
+
+- Added smart header source for column mapping dialog (uses raw uploaded headers during mapping step)
+- Implemented mapping conversion from UI format (Expected → CSV Header) to parser format (CSV Header → DB field)
+- Introduced “Use Suggested Mapping” and “Accept All & Continue” actions
+  - Prefills exact header matches; falls back to suggested alternatives (SKU→Product ID, Manufacturer→Brand, etc.)
+  - Accept All auto-advances to preview when all four required mappings resolve
+- Validation confirmed via smoke tests:
+  - URL/price/length constraint errors surfaced clearly
+  - Duplicate Product ID detection within import
+- Debug Logging now captures mapping info and sample data for each import
